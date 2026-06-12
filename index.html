@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Subachi — AI Treasury Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --white:#ffffff;
+  --off:#f0f0f0;
+  --red:#e8001d;
+  --red2:#ff1a35;
+  --dark:#0a0a0a;
+  --mid:#1a1a1a;
+  --gray:#888;
+  --light-gray:#ddd;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--white);color:var(--dark);overflow-x:hidden;}
+
+/* SCAN LINE TEXTURE */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.015) 2px,rgba(0,0,0,0.015) 4px);
+  pointer-events:none;z-index:1000;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(255,255,255,0.97);
+  border-bottom:2px solid var(--red);
+  padding:0 40px;
+  display:flex;align-items:stretch;justify-content:space-between;
+  height:56px;
+}
+.nav-left{display:flex;align-items:center;gap:0;}
+.nav-logo{
+  display:flex;align-items:center;gap:0;
+  font-family:'Rajdhani',sans-serif;
+  font-size:22px;font-weight:700;color:var(--dark);
+  letter-spacing:3px;text-transform:uppercase;text-decoration:none;
+}
+.nav-logo span{color:var(--red);}
+.nav-slash{
+  width:2px;height:32px;background:var(--red);
+  margin:0 20px;transform:skewX(-15deg);
+}
+.nav-tag{font-size:10px;font-weight:700;color:var(--gray);letter-spacing:2px;text-transform:uppercase;}
+.nav-links{display:flex;align-items:stretch;}
+.nav-links a{
+  display:flex;align-items:center;
+  color:var(--gray);text-decoration:none;font-size:12px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;padding:0 20px;
+  border-left:1px solid #eee;transition:color .15s,background .15s;
+}
+.nav-links a:hover{color:var(--red);background:#fff5f5;}
+.nav-cta{
+  display:flex;align-items:center;
+  background:var(--red);color:#fff;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:0 24px;text-decoration:none;
+  clip-path:polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition:background .15s;margin-left:8px;
+}
+.nav-cta:hover{background:var(--red2);}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  background:var(--white);
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;
+  padding:80px 0 0;
+  position:relative;overflow:hidden;
+}
+/* Red corner accent */
+.hero::before{
+  content:'';position:absolute;top:0;right:0;
+  width:50%;height:4px;background:var(--red);
+}
+.hero::after{
+  content:'';position:absolute;
+  right:0;top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,var(--red),transparent);
+}
+
+.hero-left{
+  padding:0 60px 80px 80px;
+  position:relative;
+}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:32px;
+}
+.hero-eyebrow-line{width:40px;height:2px;background:var(--red);}
+.hero-eyebrow-text{
+  font-size:11px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--red);
+}
+.hero h1{
+  font-family:'Rajdhani',sans-serif;
+  font-size:clamp(56px,7vw,96px);
+  font-weight:700;line-height:.95;
+  letter-spacing:-1px;
+  color:var(--dark);
+  margin-bottom:8px;
+}
+.hero h1 .white-block{
+  display:inline-block;
+  background:var(--dark);color:#fff;
+  padding:0 12px;margin-bottom:4px;
+}
+.hero h1 .red-word{color:var(--red);}
+.hero-sub{
+  font-size:15px;color:var(--gray);
+  line-height:1.7;max-width:400px;margin:24px 0 40px;
+  font-weight:400;
+}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-red{
+  background:var(--red);color:#fff;
+  border:none;font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:14px 28px;cursor:pointer;text-decoration:none;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:background .15s;
+}
+.btn-red:hover{background:var(--red2);}
+.btn-ghost-red{
+  background:transparent;color:var(--red);
+  border:2px solid var(--red);
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:12px 28px;cursor:pointer;text-decoration:none;
+  transition:all .15s;
+}
+.btn-ghost-red:hover{background:var(--red);color:#fff;}
+
+/* HERO RIGHT - Terminal */
+.hero-right{
+  background:var(--dark);
+  height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 60px 80px 40px;
+  position:relative;
+}
+.hero-right::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--red);
+}
+.terminal{
+  background:#0d0d0d;border:1px solid #222;
+  border-top:2px solid var(--red);
+  font-family:'Rajdhani',monospace;
+  padding:0;border-radius:0;
+}
+.terminal-bar{
+  background:#111;padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid #222;
+}
+.t-dot{width:10px;height:10px;border-radius:50%;}
+.t-dot.r{background:var(--red);}
+.t-dot.y{background:#f59e0b;}
+.t-dot.g{background:#10b981;}
+.terminal-title{font-size:11px;color:#555;margin-left:8px;letter-spacing:1px;font-family:'Inter',sans-serif;}
+.terminal-body{padding:20px;font-size:13px;line-height:1.8;font-family:'Rajdhani',monospace;}
+.t-line{display:flex;gap:10px;margin-bottom:4px;}
+.t-prompt{color:var(--red);font-weight:700;}
+.t-cmd{color:#fff;}
+.t-out{color:#10b981;padding-left:20px;}
+.t-out.warn{color:#f59e0b;}
+.t-out.alert{color:var(--red);}
+.t-cursor{display:inline-block;width:8px;height:14px;background:var(--red);animation:blink 1s step-end infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* STATS BAR */
+.stats-bar{
+  background:var(--dark);
+  display:flex;border-top:1px solid #222;
+}
+.stat-b{
+  flex:1;padding:20px 24px;
+  border-right:1px solid #222;text-align:center;
+}
+.stat-b:last-child{border-right:none;}
+.stat-b-val{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--red);letter-spacing:-1px;}
+.stat-b-label{font-size:10px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+
+/* SECTION BASE */
+.section{padding:96px 80px;}
+.sec-eyebrow{
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;
+}
+.sec-eyebrow-line{width:32px;height:2px;background:var(--red);}
+.sec-eyebrow-text{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);}
+.sec-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:clamp(36px,5vw,60px);font-weight:700;
+  line-height:1.0;letter-spacing:-1px;color:var(--dark);margin-bottom:20px;
+}
+.sec-sub{font-size:16px;color:var(--gray);line-height:1.75;max-width:520px;}
+
+/* HOW IT WORKS — edge lines */
+.how{background:var(--white);padding:96px 80px;}
+.how-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:0;margin-top:60px;
+  border:1px solid #eee;
+  border-right:none;
+}
+.how-step{
+  padding:36px 28px;
+  border-right:1px solid #eee;
+  position:relative;
+}
+.how-step::before{
+  content:'';position:absolute;top:0;left:0;right:0;
+  height:3px;background:transparent;transition:background .2s;
+}
+.how-step:hover::before{background:var(--red);}
+.how-num{
+  font-family:'Rajdhani',sans-serif;
+  font-size:48px;font-weight:700;color:#eee;
+  line-height:1;margin-bottom:16px;
+}
+.how-step h3{font-size:16px;font-weight:800;color:var(--dark);margin-bottom:8px;letter-spacing:.5px;}
+.how-step p{font-size:13px;color:var(--gray);line-height:1.7;}
+
+/* FEATURES — dark section */
+.features{background:var(--dark);padding:96px 80px;}
+.features .sec-title{color:#fff;}
+.features .sec-sub{color:#555;}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#222;margin-top:60px;}
+.feat-card{
+  background:var(--dark);padding:36px 28px;
+  position:relative;overflow:hidden;
+  transition:background .2s;
+}
+.feat-card:hover{background:#111;}
+.feat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:2px;background:var(--red);transform:scaleX(0);transform-origin:left;
+  transition:transform .3s;
+}
+.feat-card:hover::after{transform:scaleX(1);}
+.feat-icon{font-size:28px;margin-bottom:16px;}
+.feat-card h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:.5px;}
+.feat-card p{font-size:13px;color:#555;line-height:1.7;}
+
+/* ALERT DEMO */
+.demo{background:#f8f8f8;padding:96px 80px;}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:60px;}
+.alert-feed{display:flex;flex-direction:column;gap:0;}
+.alert-item{
+  padding:16px 20px;
+  border-left:3px solid transparent;
+  border-bottom:1px solid #eee;
+  background:#fff;
+  display:flex;align-items:flex-start;gap:14px;
+  transition:border-color .2s;
+  animation:slideIn .4s ease forwards;
+  opacity:0;
+}
+.alert-item:nth-child(1){animation-delay:.1s;}
+.alert-item:nth-child(2){animation-delay:.3s;}
+.alert-item:nth-child(3){animation-delay:.5s;}
+.alert-item:nth-child(4){animation-delay:.7s;}
+.alert-item:nth-child(5){animation-delay:.9s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+.alert-item.critical{border-left-color:var(--red);}
+.alert-item.warning{border-left-color:#f59e0b;}
+.alert-item.info{border-left-color:#10b981;}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.alert-dot.critical{background:var(--red);}
+.alert-dot.warning{background:#f59e0b;}
+.alert-dot.info{background:#10b981;}
+.alert-content{flex:1;}
+.alert-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px;}
+.alert-desc{font-size:12px;color:var(--gray);}
+.alert-time{font-size:11px;color:#bbb;font-family:'Rajdhani',monospace;white-space:nowrap;}
+
+/* CHAT DEMO */
+.chat-box{background:var(--dark);border-top:2px solid var(--red);}
+.chat-header{padding:14px 20px;border-bottom:1px solid #222;display:flex;align-items:center;gap:10px;}
+.chat-avatar{width:28px;height:28px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;font-family:'Rajdhani',sans-serif;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
+.chat-name{font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;}
+.chat-status{font-size:11px;color:#10b981;margin-left:auto;}
+.chat-messages{padding:20px;display:flex;flex-direction:column;gap:12px;}
+.chat-msg{max-width:85%;}
+.chat-msg.user{align-self:flex-end;}
+.chat-msg.ai{align-self:flex-start;}
+.chat-bubble{
+  padding:10px 14px;font-size:13px;line-height:1.5;
+}
+.chat-msg.user .chat-bubble{background:var(--red);color:#fff;clip-path:polygon(0 0,100% 0,calc(100% - 6px) 100%,0 100%);}
+.chat-msg.ai .chat-bubble{background:#1a1a1a;color:#ddd;clip-path:polygon(6px 0,100% 0,100% 100%,0 100%);}
+.chat-input-row{
+  padding:12px 16px;border-top:1px solid #222;
+  display:flex;gap:10px;align-items:center;
+}
+.chat-input{
+  flex:1;background:#111;border:1px solid #333;
+  color:#fff;font-size:13px;padding:10px 14px;
+  font-family:'Inter',sans-serif;outline:none;
+}
+.chat-input::placeholder{color:#444;}
+.chat-send{
+  background:var(--red);border:none;color:#fff;
+  padding:10px 16px;font-size:12px;font-weight:700;
+  letter-spacing:1px;cursor:pointer;font-family:'Inter',sans-serif;
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
+}
+
+/* CTA */
+.cta-section{
+  background:var(--dark);padding:96px 80px;
+  position:relative;overflow:hidden;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.cta-section::before{
+  content:'SUBACHI';
+  position:absolute;right:-40px;top:50%;transform:translateY(-50%);
+  font-family:'Rajdhani',sans-serif;font-size:180px;font-weight:700;
+  color:rgba(255,255,255,0.02);letter-spacing:-4px;pointer-events:none;
+  white-space:nowrap;
+}
+.cta-section .sec-title{color:#fff;}
+.cta-section .sec-sub{color:#555;margin-bottom:32px;}
+.cta-form{display:flex;flex-direction:column;gap:12px;}
+.cta-input{
+  background:#111;border:1px solid #333;border-left:3px solid var(--red);
+  color:#fff;font-size:14px;padding:14px 18px;
+  font-family:'Inter',sans-serif;outline:none;
+  transition:border-color .2s;
+}
+.cta-input:focus{border-color:var(--red);background:#0d0d0d;}
+.cta-input::placeholder{color:#444;}
+.cta-note{font-size:12px;color:#333;margin-top:4px;}
+
+/* FOOTER */
+footer{
+  background:#050505;
+  border-top:2px solid var(--red);
+  padding:28px 80px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+}
+.footer-logo{
+  font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:#fff;
+}
+.footer-logo span{color:var(--red);}
+.footer-links{display:flex;gap:24px;}
+.footer-links a{color:#333;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:color .2s;}
+.footer-links a:hover{color:var(--red);}
+.footer-arc{font-size:11px;color:#333;letter-spacing:1px;text-transform:uppercase;}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 18px;}
+  .nav-links{display:none;}
+  .hero{grid-template-columns:1fr;padding-top:56px;}
+  .hero-right{height:auto;padding:40px 20px;}
+  .hero-left{padding:40px 20px;}
+  .section,.how,.features,.demo,.cta-section{padding:64px 20px;}
+  .how-grid{grid-template-columns:1fr 1fr;}
+  .feat-grid{grid-template-columns:1fr;}
+  .demo-grid{grid-template-columns:1fr;}
+  .cta-section{grid-template-columns:1fr;}
+  footer{padding:24px 20px;flex-direction:column;text-align:center;}
+  .footer-links{justify-content:center;}
+  .stats-bar{flex-wrap:wrap;}
+  .stat-b{min-width:50%;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a class="nav-logo" href="#">SUB<span>A</span>CHI</a>
+    <div class="nav-slash"></div>
+    <div class="nav-tag">AI Treasury Agent</div>
+  </div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#demo">Live Demo</a>
+    <a class="nav-cta" href="#cta">Early Access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <div class="hero-eyebrow-text">Built on Arc · Testnet Active</div>
+    </div>
+    <h1>
+      <span class="white-block">YOUR</span><br/>
+      TREASURY.<br/>
+      <span class="red-word">ALWAYS</span><br/>
+      WATCHED.
+    </h1>
+    <p class="hero-sub">Subachi is an AI agent that monitors your stablecoin treasury on Arc 24/7 — detecting threats, tracking balances, and alerting you before things go wrong.</p>
+    <div class="hero-actions">
+      <a class="btn-red" href="#cta">Request Early Access</a>
+      <a class="btn-ghost-red" href="#demo">See it live</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="t-dot r"></div>
+        <div class="t-dot y"></div>
+        <div class="t-dot g"></div>
+        <div class="terminal-title">subachi_agent · arc-testnet</div>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line"><span class="t-prompt">›</span><span class="t-cmd">subachi watch --wallets all</span></div>
+        <div class="t-line"><span class="t-out">✓ Monitoring 3 wallets on Arc Testnet</span></div>
+        <div class="t-line"><span class="t-out">✓ USDC balance: $1,725,000</span></div>
+        <div class="t-line"><span class="t-out">✓ EURC balance: €1,050,000</span></div>
+        <div class="t-line" style="margin-top:8px;"><span class="t-prompt">›</span><span class="t-cmd">subachi alerts --live</span></div>
+        <div class="t-line"><span class="t-out warn">⚠ Payroll wallet below threshold — $380K</span></div>
+        <div class="t-line"><span class="t-out alert">✗ ALERT: Large outflow detected — $120K</span></div>
+        <div class="t-line"><span class="t-out">✓ Finality confirmed in 0.48s</span></div>
+        <div class="t-line" style="margin-top:8px;"><span class="t-prompt">›</span><span class="t-cmd">subachi ask "total exposure today?"</span></div>
+        <div class="t-line"><span class="t-out">→ Total: $2.87M USD equivalent</span></div>
+        <div class="t-line"><span class="t-out">→ USDC: 62% · EURC: 38%</span></div>
+        <div class="t-line" style="margin-top:8px;"><span class="t-prompt">›</span><span class="t-cmd"><span class="t-cursor"></span></span></div>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-b"><div class="stat-b-val">&lt;1s</div><div class="stat-b-label">Finality</div></div>
+      <div class="stat-b"><div class="stat-b-val">24/7</div><div class="stat-b-label">Monitoring</div></div>
+      <div class="stat-b"><div class="stat-b-val">$0.01</div><div class="stat-b-label">Gas Fee</div></div>
+      <div class="stat-b"><div class="stat-b-val">AI</div><div class="stat-b-label">Powered</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="sec-eyebrow"><div class="sec-eyebrow-line"></div><div class="sec-eyebrow-text">How it works</div></div>
+  <div class="sec-title">CONNECT.<br/>WATCH. ACT.</div>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="how-num">01</div>
+      <h3>CONNECT WALLETS</h3>
+      <p>Paste your Arc treasury wallet addresses. Subachi reads balances live from Arc RPC — no private keys, no custody.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">02</div>
+      <h3>SET THRESHOLDS</h3>
+      <p>Define your alert rules. Low balance limits, large transfer triggers, unusual activity patterns — you control what matters.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">03</div>
+      <h3>AI MONITORS</h3>
+      <p>Subachi watches your treasury around the clock. Every transaction on Arc confirms in under one second — Subachi sees it instantly.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">04</div>
+      <h3>YOU GET ALERTED</h3>
+      <p>Critical alerts hit your inbox or phone the moment something needs your attention. Ask Subachi anything in plain English.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="sec-eyebrow"><div class="sec-eyebrow-line"></div><div class="sec-eyebrow-text">Capabilities</div></div>
+  <div class="sec-title" style="color:#fff;">BUILT TO<br/>NEVER MISS.</div>
+  <div class="feat-grid">
+    <div class="feat-card">
+      <div class="feat-icon">⚡</div>
+      <h3>REAL-TIME BALANCE TRACKING</h3>
+      <p>Live USDC and EURC balances across all wallets. Sub-second updates directly from Arc Testnet RPC.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🚨</div>
+      <h3>INTELLIGENT ALERTS</h3>
+      <p>Low balance warnings, large transfer detection, and unusual activity flags — delivered before you even check.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🤖</div>
+      <h3>AI CHAT INTERFACE</h3>
+      <p>Ask Subachi anything. "What's my EURC exposure?" "Any unusual activity today?" Plain English. Instant answers.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <h3>MULTI-WALLET OVERVIEW</h3>
+      <p>Operations, payroll, FX, settlement — all treasury wallets unified in one dashboard with live Arc data.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🛡️</div>
+      <h3>COMPLIANCE MONITORING</h3>
+      <p>Arc enforces the USDC blocklist at protocol level. Subachi surfaces compliance events the moment they occur.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📈</div>
+      <h3>FX EXPOSURE TRACKING</h3>
+      <p>Monitor your USD vs EUR split across USDC and EURC holdings. Know your position in real time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section class="demo" id="demo">
+  <div class="sec-eyebrow"><div class="sec-eyebrow-line"></div><div 
